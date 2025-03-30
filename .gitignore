@@ -172,3 +172,5 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+cache/fastf1_http_cache.sqlite
+.idea
