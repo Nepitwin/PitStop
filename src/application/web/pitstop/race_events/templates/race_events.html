@@ -42,75 +42,33 @@
 <body>
 
 <div class="container mt-5">
-
     <div id="cardCarousel" class="carousel">
-
         <div class="carousel-inner">
-
-            <div class="carousel-item active">
+            {% for event in events %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
                 <div class="container mt-5">
-                    <div class="title">Round 23: Qatar Grand Prix</div>
-
+                    <div class="title">Round {{ event.round }}: {{ event.name }}</div>
                     <div class="grid-container">
                         <div class="grid-item">Location</div>
-                        <div class="grid-item value">Lusail - Qatar</div>
-
-                        <div class="grid-item">Practice 1</div>
-                        <div class="grid-item value">2024-11-29 16:30:00+03:00</div>
-
-                        <div class="grid-item">Sprint Qualifying</div>
-                        <div class="grid-item value">2024-11-29 20:30:00+03:00</div>
-
-                        <div class="grid-item">Sprint</div>
-                        <div class="grid-item value">2024-11-30 17:00:00+03:00</div>
-
-                        <div class="grid-item">Qualifying</div>
-                        <div class="grid-item value">2024-12-07 18:00:00+04:00</div>
-
-                        <div class="grid-item">Race</div>
-                        <div class="grid-item value">2024-12-01 19:00:00+03:00</div>
-                    </div> <!-- Grid Container -->
-                </div> <!-- Container Item -->
-            </div> <!-- Carousel Item -->
-
-            <div class="carousel-item">
-                <div class="container mt-5">
-                    <div class="title">Round 24: Abu Dhabi Grand Prix</div>
-
-                    <div class="grid-container">
-                        <div class="grid-item">Location</div>
-                        <div class="grid-item value">Yas Island - UAE</div>
-
-                        <div class="grid-item">Practice 1</div>
-                        <div class="grid-item value">2024-12-06 13:30:00+04:00</div>
-
-                        <div class="grid-item">Practice 2</div>
-                        <div class="grid-item value">2024-12-06 17:00:00+04:00</div>
-
-                        <div class="grid-item">Practice 3</div>
-                        <div class="grid-item value">2024-12-07 14:30:00+04:00</div>
-
-                        <div class="grid-item">Qualifying</div>
-                        <div class="grid-item value">2024-12-07 18:00:00+04:00</div>
-
-                        <div class="grid-item">Race</div>
-                        <div class="grid-item value">2024-12-08 17:00:00+04:00</div>
-                    </div> <!-- Grid Container -->
-                </div> <!-- Container Item -->
-            </div> <!-- Carousel Item -->
-        </div> <!-- Carousel Inner -->
-        <button class="carousel-control-prev" type="button" data-bs-target="#cardCarousel"
-                data-bs-slide="prev">
+                        <div class="grid-item value">{{ event.location }}</div>
+                        {% for session, time in event.sessions.items %}
+                        <div class="grid-item">{{ session }}</div>
+                        <div class="grid-item value">{{ time }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#cardCarousel" data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Previous</span>
         </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#cardCarousel"
-                data-bs-slide="next">
+        <button class="carousel-control-next" type="button" data-bs-target="#cardCarousel" data-bs-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
         </button>
-    </div> <!-- Carousel -->
-
+    </div>
 </div>
 
 </body>
