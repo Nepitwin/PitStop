@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 
 import os
+import json
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,14 +22,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-nrofg+err4&-t*_syfntri-h6&0o4b#6y!ee)vcuzp2a9iu!dn'
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(os.environ.get("DEBUG", default=0))
 
-ALLOWED_HOSTS = []
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.environ.get('SECRET_KEY')
+if not SECRET_KEY and DEBUG:
+    # DEFAULT VALUE WILL BE USED ONLY ON DEBUG
+    SECRET_KEY = 'django-insecure-nrofg+err4&-t*_syfntri-h6&0o4b#6y!ee)vcuzp2a9iu!dn'
+else:
+    raise Exception('SECRET_KEY must be set')
 
+if not DEBUG:
+    ALLOWED_HOSTS = json.loads(os.environ['DJANGO_ALLOWED_HOSTS'])
+else:
+    ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
 # Application definition
 
@@ -39,7 +47,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'bootstrap5',
 ]
 
 MIDDLEWARE = [

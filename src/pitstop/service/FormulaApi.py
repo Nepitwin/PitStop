@@ -20,12 +20,13 @@ class FormulaApi:
                 "round": event['RoundNumber'],
                 "name": event['EventName'],
                 "location": f"{event['Location']} - {event['Country']}",
+                "date": event['EventDate'],
                 "sessions": {
-                    event['Session1']: str(event['Session1Date']),
-                    event['Session2']: str(event['Session2Date']),
-                    event['Session3']: str(event['Session3Date']),
-                    event['Session4']: str(event['Session4Date']),
-                    event['Session5']: str(event['Session5Date']),
+                    event['Session1']: event['Session1Date'],
+                    event['Session2']: event['Session2Date'],
+                    event['Session3']: event['Session3Date'],
+                    event['Session4']: event['Session4Date'],
+                    event['Session5']: event['Session5Date'],
                 }
             })
 
