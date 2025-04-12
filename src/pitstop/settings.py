@@ -26,17 +26,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DEBUG = bool(os.environ.get("DEBUG", default=0))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
-if not SECRET_KEY and DEBUG:
-    # DEFAULT VALUE WILL BE USED ONLY ON DEBUG
-    SECRET_KEY = 'django-insecure-nrofg+err4&-t*_syfntri-h6&0o4b#6y!ee)vcuzp2a9iu!dn'
-else:
-    raise Exception('SECRET_KEY must be set')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+if not SECRET_KEY:
+    raise Exception('DJANGO_SECRET_KEY must be set in .env')
 
-if not DEBUG:
-    ALLOWED_HOSTS = json.loads(os.environ['DJANGO_ALLOWED_HOSTS'])
-else:
-    ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS = json.loads(os.environ['DJANGO_ALLOWED_HOSTS'])
+if not ALLOWED_HOSTS:
+    raise Exception('DJANGO_ALLOWED_HOSTS must be set in .env')
 
 # Application definition
 
