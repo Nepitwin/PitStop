@@ -1,72 +1,117 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Racing Events</title>
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"/>
 
     <style>
-        .container {
-            max-width: 800px; /* Adjust width */
-            margin: auto;
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        .title {
-            font-size: 24px;
-            font-weight: bold;
-            text-align: center;
+        .carousel-container {
+            max-width: 900px;
+            margin: 60px auto;
+            padding: 20px; /* Added padding */
+            position: relative;
+        }
+
+        .event-card {
+            background-color: #1e1e1e;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .event-title {
+            font-size: 32px; /* Increased font size */
+            font-weight: 700; /* Increased font weight */
+            color: #ffffff;
             margin-bottom: 20px;
+            text-align: center;
         }
 
-        .grid-container {
+        .event-details {
             display: grid;
-            grid-template-columns: 1fr 2fr; /* First column for label, second for value */
-            gap: 10px;
-            padding: 20px;
+            grid-template-columns: 1fr 2fr;
+            gap: 15px;
         }
 
-        .grid-item {
-            padding: 10px;
-            border: 1px solid #ccc;
-            background-color: #f8f9fa;
-            font-weight: bold;
+        .detail-label {
+            color: #bbb;
+            font-weight: 500;
         }
 
-        .grid-item.value {
-            font-weight: normal;
-            color: #555;
+        .detail-value {
+            color: #e0e0e0;
+        }
+
+        /* Carousel Control Styling */
+        #eventCarousel .carousel-control-prev,
+        #eventCarousel .carousel-control-next {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: opacity 0.3s ease, background-color 0.3s ease;
+        }
+
+        #eventCarousel:hover .carousel-control-prev,
+        #eventCarousel:hover .carousel-control-next {
+            opacity: 1;
+        }
+
+        #eventCarousel .carousel-control-prev-icon,
+        #eventCarousel .carousel-control-next-icon {
+            filter: invert(1);
+            width: 24px;
+            height: 24px;
+        }
+
+        #eventCarousel .carousel-control-prev:hover,
+        #eventCarousel .carousel-control-next:hover {
+            background-color: rgba(255, 255, 255, 0.2);
         }
     </style>
 </head>
 <body>
 
-<div class="container mt-5">
-    <div id="cardCarousel" class="carousel slide">
+<div class="carousel-container">
+    <div id="eventCarousel" class="carousel slide">
         <div class="carousel-inner">
             {% for event in events %}
-            <div class="carousel-item {% if event.active %}active{% endif %}">
-                <div class="container mt-5">
-                    <div class="title">Round {{ event.round }}: {{ event.name }}</div>
-                    <div class="grid-container">
-                        <div class="grid-item">Location</div>
-                        <div class="grid-item value">{{ event.location }}</div>
-                        {% for session, time in event.sessions.items %}
-                        <div class="grid-item">{{ session }}</div>
-                        <div class="grid-item value">{{ time }}</div>
-                        {% endfor %}
+                <div class="carousel-item {% if event.active %}active{% endif %}">
+                    <div class="event-card">
+                        <div class="event-title">Round {{ event.round }}: {{ event.name }}</div>
+                        <div class="event-details">
+                            <div class="detail-label">Location</div>
+                            <div class="detail-value">{{ event.location }}</div>
+                            {% for session, time in event.sessions.items %}
+                                <div class="detail-label">{{ session }}</div>
+                                <div class="detail-value">{{ time }}</div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
-            </div>
             {% endfor %}
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#cardCarousel" data-bs-slide="prev">
+
+        <!-- Carousel Controls -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#eventCarousel" data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Previous</span>
         </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#cardCarousel" data-bs-slide="next">
+        <button class="carousel-control-next" type="button" data-bs-target="#eventCarousel" data-bs-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
         </button>
@@ -74,7 +119,7 @@
 </div>
 
 <!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
