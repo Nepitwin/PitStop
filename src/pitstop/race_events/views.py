@@ -6,8 +6,7 @@ from pitstop.service.TimeApi import TimeApi
 from pitstop.service.FormulaApi import FormulaApi
 
 def index(request):
-    api = FormulaApi()
-    events = api.get_all_events_from_year(2025)
+    events = FormulaApi.get_all_events_from_year(2025)
 
     counter = 0
     active_counter = 0
