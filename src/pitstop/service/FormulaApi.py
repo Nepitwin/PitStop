@@ -1,7 +1,12 @@
 import fastf1
 import pandas as pd
+from datetime import datetime
+from typing import List, Optional
 from collections import defaultdict
 from django.conf import settings
+from pitstop.model.RaceEvent import RaceEvent
+from pitstop.model.RaceSession import RaceSession
+
 
 class FormulaApi:
 
@@ -10,27 +15,32 @@ class FormulaApi:
         fastf1.Cache.enable_cache(settings.BASE_DIR)
 
     @staticmethod
-    def get_all_events_from_year(year: int) -> list[dict]:
+    def get_next_event(events: List[RaceEvent]) -> Optional[RaceEvent]:
+        current_date = datetime.now()
+
+        future_events = [event for event in events if event.date > current_date]
+
+        if future_events:
+            return sorted(future_events, key=lambda e: e.date)[0]
+
+        return None
+
+    @staticmethod
+    def get_all_events_from_year(year: int) -> list[RaceEvent]:
 
         events = []
 
         schedule = fastf1.get_event_schedule(year, include_testing=False)
 
-        # Iterate through all events and print details
         for _, event in schedule.iterrows():
-            events.append({
-                "round": event['RoundNumber'],
-                "name": event['EventName'],
-                "location": f"{event['Location']} - {event['Country']}",
-                "date": event['EventDate'],
-                "sessions": {
-                    event['Session1']: event['Session1Date'],
-                    event['Session2']: event['Session2Date'],
-                    event['Session3']: event['Session3Date'],
-                    event['Session4']: event['Session4Date'],
-                    event['Session5']: event['Session5Date'],
-                }
-            })
+            session_one = RaceSession(event['Session1'], event['Session1Date'])
+            session_two = RaceSession(event['Session2'], event['Session2Date'])
+            session_three = RaceSession(event['Session3'], event['Session3Date'])
+            session_four = RaceSession(event['Session4'], event['Session4Date'])
+            session_five = RaceSession(event['Session5'], event['Session5Date'])
+            sessions = [session_one, session_two, session_three, session_four, session_five]
+            race_event = RaceEvent(event['RoundNumber'], event['EventName'], f"{event['Location']} - {event['Country']}", event['EventDate'], sessions)
+            events.append(race_event)
 
         return events
 

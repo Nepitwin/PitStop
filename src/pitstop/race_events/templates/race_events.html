@@ -92,13 +92,13 @@
             {% for event in events %}
                 <div class="carousel-item {% if event.active %}active{% endif %}">
                     <div class="event-card">
-                        <div class="event-title">Round {{ event.round }}: {{ event.name }}</div>
+                        <div class="event-title">Round {{ event.session }}: {{ event.name }}</div>
                         <div class="event-details">
                             <div class="detail-label">Location</div>
                             <div class="detail-value">{{ event.location }}</div>
-                            {% for session, time in event.sessions.items %}
-                                <div class="detail-label">{{ session }}</div>
-                                <div class="detail-value">{{ time }}</div>
+                            {% for session in event.sessions %}
+                                <div class="detail-label">{{ session.name }}</div>
+                                <div class="detail-value">{{ session.date_to_string }}</div>
                             {% endfor %}
                         </div>
                     </div>
