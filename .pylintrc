@@ -1,0 +1,22 @@
+[FORMAT]
+max-line-length=120
+
+[MASTER]
+disable=
+    C0114, # missing-module-docstring
+    C0115, # missing-class-docstring
+    C0116, # missing-function-docstring
+    R0913, # too-many-arguments
+    R0903, # too-few-public-methods
+    W0511, # comment-code-which-should-be-fixed
+
+# Specify a score threshold under which the program will exit with error.
+fail-under=10
+
+[SIMILARITIES]
+# Ignore comments when computing similarities.
+ignore-comments=yes
+# Ignore docstrings when computing similarities.
+ignore-docstrings=yes
+# Ignore imports when computing similarities.
+ignore-imports=yes

@@ -1,11 +1,13 @@
-import fastf1
-import pandas as pd
 from datetime import datetime
 from typing import List, Optional
 from collections import defaultdict
 from django.conf import settings
-from pitstop.model.RaceEvent import RaceEvent
-from pitstop.model.RaceSession import RaceSession
+
+import fastf1
+import pandas as pd
+
+from pitstop.model.race_event import RaceEvent
+from pitstop.model.race_session import RaceSession
 
 
 class FormulaApi:
@@ -38,17 +40,22 @@ class FormulaApi:
             session_three = RaceSession(event['Session3'], event['Session3Date'])
             session_four = RaceSession(event['Session4'], event['Session4Date'])
             session_five = RaceSession(event['Session5'], event['Session5Date'])
+
             sessions = [session_one, session_two, session_three, session_four, session_five]
-            race_event = RaceEvent(event['RoundNumber'], event['EventName'], f"{event['Location']} - {event['Country']}", event['EventDate'], sessions)
+
+            race_event = RaceEvent(
+                event['RoundNumber'],
+                event['EventName'],
+                f"{event['Location']} - {event['Country']}",
+                event['EventDate'],
+                sessions)
+
             events.append(race_event)
 
         return events
 
     @staticmethod
     def get_standings(year: int) -> tuple[pd.DataFrame, pd.DataFrame]:
-
-        # TODO -> Method is actually very slow, try to optimize it
-        # TODO -> Cache usage should be used to speed up the process to persist actually standing and update if new racing data is available
 
         driver_pts = defaultdict(float)
         constructor_pts = defaultdict(float)
@@ -61,37 +68,12 @@ class FormulaApi:
             race_date = event['Session5Date']
 
             if race_date > now:
-                continue  # Skip upcoming races
+                break  # Skip upcoming races
 
             # --- Race Session ---
-            try:
-                race = fastf1.get_session(year, round_num, 'R')
-                race.load()
-                results = race.results
-
-                for _, row in results.iterrows():
-                    points = row['Points']
-                    name = row['FullName']
-                    team = row['TeamName']
-                    driver_pts[name] += points
-                    constructor_pts[team] += points
-            except Exception:
-                pass  # No racing data
-
+            FormulaApi._add_standing_results_from_round(year, round_num, "R", driver_pts, constructor_pts)
             # --- Sprint Session ---
-            try:
-                sprint = fastf1.get_session(2025, round_num, 'S')
-                sprint.load()
-                results = sprint.results
-
-                for _, row in results.iterrows():
-                    points = row['Points']
-                    name = row['FullName']
-                    team = row['TeamName']
-                    driver_pts[name] += points
-                    constructor_pts[team] += points
-            except Exception:
-                pass  # No sprint for this round
+            FormulaApi._add_standing_results_from_round(year, round_num, "S", driver_pts, constructor_pts)
 
         # Create standings tables
         driver_df = pd.DataFrame([
@@ -110,3 +92,23 @@ class FormulaApi:
         constructor_df.insert(0, 'Position', constructor_df.index)
 
         return driver_df, constructor_df
+
+    @staticmethod
+    def _add_standing_results_from_round(year: int,
+                                         round_number: int,
+                                         identifier: str,
+                                         driver_pts: dict,
+                                         constructor_pts: dict) -> None:
+        try:
+            session = fastf1.get_session(year, round_number, identifier)
+            session.load(laps=False, telemetry=False, weather=False, messages=False)
+            results = session.results
+
+            for _, row in results.iterrows():
+                points = row['Points']
+                name = row['FullName']
+                team = row['TeamName']
+                driver_pts[name] += points
+                constructor_pts[team] += points
+        except ValueError:
+            pass  # No sprint for this round

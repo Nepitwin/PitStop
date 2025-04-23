@@ -174,4 +174,4 @@ cython_debug/
 .pypirc
 .idea
 **/fastf1_http_cache.sqlite
-src/main
+main
