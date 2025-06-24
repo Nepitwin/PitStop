@@ -1,20 +1,16 @@
 from datetime import datetime
 from typing import List, Optional
 from collections import defaultdict
-from django.conf import settings
 
 import fastf1
 import pandas as pd
+from fastf1.events import EventSchedule
 
 from pitstop.model.race_event import RaceEvent
 from pitstop.model.race_session import RaceSession
 
 
 class FormulaApi:
-
-    def __init__(self):
-        # Enable the cache for performance improvements
-        fastf1.Cache.enable_cache(settings.BASE_DIR)
 
     @staticmethod
     def get_next_event(events: List[RaceEvent]) -> Optional[RaceEvent]:
@@ -28,11 +24,9 @@ class FormulaApi:
         return None
 
     @staticmethod
-    def get_all_events_from_year(year: int) -> list[RaceEvent]:
+    def get_all_events_from_year(schedule: EventSchedule) -> list[RaceEvent]:
 
         events = []
-
-        schedule = fastf1.get_event_schedule(year, include_testing=False)
 
         for _, event in schedule.iterrows():
             session_one = RaceSession(event['Session1'], event['Session1Date'])
@@ -55,12 +49,13 @@ class FormulaApi:
         return events
 
     @staticmethod
-    def get_standings(year: int) -> tuple[pd.DataFrame, pd.DataFrame]:
+    def get_standings(schedule: EventSchedule) -> tuple[pd.DataFrame, pd.DataFrame]:
+
+        year = schedule.year
 
         driver_pts = defaultdict(float)
         constructor_pts = defaultdict(float)
 
-        schedule = fastf1.get_event_schedule(year)
         now = pd.Timestamp.utcnow()
 
         for _, event in schedule.iterrows():
