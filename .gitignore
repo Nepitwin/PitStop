@@ -175,3 +175,4 @@ cython_debug/
 .idea
 **/fastf1_http_cache.sqlite
 main
+*.ff1pkl
