@@ -71,3 +71,17 @@ def test_get_standings(mock_get_session):
     assert not constructor_df.empty
     assert driver_df.iloc[0]['Driver'] == 'Max Mustermann'
     assert constructor_df.iloc[0]['Constructor'] == 'Test Team'
+
+@patch('pitstop.service.formula_api.fastf1.get_event_schedule')
+def test_get_event_schedule_returns_schedule(mock_get_event_schedule):
+    mock_schedule = MagicMock()
+    mock_get_event_schedule.return_value = mock_schedule
+
+    result = FormulaApi.get_event_schedule(2025, include_testing=True)
+    mock_get_event_schedule.assert_called_once_with(2025, include_testing=True)
+    assert result == mock_schedule
+
+@patch('pitstop.service.formula_api.fastf1.Cache')
+def test_set_cache_directory_sets_path(mock_cache):
+    FormulaApi.set_cache_directory('C:/test/cache')
+    mock_cache.enable_cache.assert_called_once_with('C:/test/cache')

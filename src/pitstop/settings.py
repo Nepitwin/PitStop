@@ -15,6 +15,8 @@ from pathlib import Path
 import os
 import json
 
+from pitstop.service.formula_api import FormulaApi
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -92,3 +94,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# Fast F1 cache directory
+FormulaApi.set_cache_directory(str(BASE_DIR))
