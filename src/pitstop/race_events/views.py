@@ -1,18 +1,13 @@
 from zoneinfo import ZoneInfo
-
-import fastf1
-from django.conf import settings
+from asgiref.sync import sync_to_async
 from django.shortcuts import render
 from pitstop.service.formula_api import FormulaApi
 
-def index(request):
+async def index(request):
 
-    # Enable the cache for performance improvements
-    fastf1.Cache.enable_cache(settings.BASE_DIR)
-
-    schedule = fastf1.get_event_schedule(2025, include_testing=False)
-    events = FormulaApi.get_all_events_from_year(schedule)
-    driver_df, constructor_df = FormulaApi.get_standings(schedule)
+    schedule = await sync_to_async(FormulaApi.get_event_schedule)(2025, include_testing=False)
+    events = await sync_to_async(FormulaApi.get_all_events_from_year)(schedule)
+    driver_df, constructor_df = await sync_to_async(FormulaApi.get_standings)(schedule)
 
     # Convert all session dates to the specified timezone
     zone = ZoneInfo("Europe/Berlin")
