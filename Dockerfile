@@ -1,5 +1,5 @@
 # Use the official Python runtime image
-FROM python:3.13-slim AS builder
+FROM python:3.13-alpine AS builder
 
 # Create the app directory
 RUN mkdir /app
@@ -23,7 +23,7 @@ COPY requirements.txt  /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Stage 2: Production stage
-FROM python:3.13-slim
+FROM python:3.13-alpine
 
 RUN useradd -m -r appuser && \
    mkdir /app && \
