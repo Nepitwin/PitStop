@@ -1,61 +1,53 @@
-# Stage 1: Builder
-FROM python:3.13-alpine AS builder
+# Use the official Python runtime image
+FROM python:3.13-slim AS builder
 
-# Install build dependencies for Python packages (one-time only)
-RUN apk add --no-cache \
-    build-base \
-    libffi-dev \
-    musl-dev \
-    gcc \
-    python3-dev \
-    cargo \
-    libxml2-dev \
-    libxslt-dev \
-    jpeg-dev \
-    zlib-dev
+# Create the app directory
+RUN mkdir /app
 
-# Environment settings
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
-
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copy only requirements first to cache better
-COPY requirements.txt .
+# Set environment variables
+# Prevents Python from writing pyc files to disk
+ENV PYTHONDONTWRITEBYTECODE=1
+#Prevents Python from buffering stdout and stderr
+ENV PYTHONUNBUFFERED=1
 
-# Upgrade pip and install Python dependencies
-RUN pip install --upgrade pip \
- && pip install --no-cache-dir -r requirements.txt
+# Upgrade pip
+RUN pip install --upgrade pip
 
-# Stage 2: Runtime
-FROM python:3.13-alpine
+# Copy the Django project  and install dependencies
+COPY requirements.txt  /app/
 
-# Install runtime dependencies only
-RUN apk add --no-cache \
-    libffi \
-    libxml2 \
-    libxslt \
-    jpeg \
-    zlib
+# run this command to install all dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Create non-root user using Alpine's adduser
-RUN adduser -D -H -u 1000 appuser
+# Stage 2: Production stage
+FROM python:3.13-slim
 
-# Set working directory
+RUN useradd -m -r appuser && \
+   mkdir /app && \
+   chown -R appuser /app
+
+# Copy the Python dependencies from the builder stage
+COPY --from=builder /usr/local/lib/python3.13/site-packages/ /usr/local/lib/python3.13/site-packages/
+COPY --from=builder /usr/local/bin/ /usr/local/bin/
+
+# Set the working directory
 WORKDIR /app
 
-# Copy Python environment from builder
-COPY --from=builder /usr/local/lib/python3.13/site-packages /usr/local/lib/python3.13/site-packages
-COPY --from=builder /usr/local/bin /usr/local/bin
-
-# Copy application code
+# Copy the Django project to the container
 COPY --chown=appuser:appuser ./src /app/
 
-# Use non-root user
+# Set environment variables to optimize Python
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# Switch to non-root user
 USER appuser
 
-# Expose port
+# Expose the Django port
 EXPOSE 8000
 
-# Run the app
+# Run Django’s development server
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "pitstop.wsgi:application"]
