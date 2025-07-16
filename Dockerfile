@@ -25,7 +25,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Stage 2: Production stage
 FROM python:3.13-alpine
 
-RUN useradd -m -r appuser && \
+RUN adduser -D -g '' appuser && \
    mkdir /app && \
    chown -R appuser /app
 
