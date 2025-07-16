@@ -1,5 +1,5 @@
-fastf1==3.5.3
-django==5.1.8
+fastf1==3.6.0
+django==5.2.4
 gunicorn==23.0.0
-requests~=2.32.3
-pandas~=2.2.3
+requests==2.32.4
+pandas==2.3.1
