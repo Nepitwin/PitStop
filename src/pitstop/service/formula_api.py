@@ -6,7 +6,7 @@ import fastf1
 import pandas as pd
 from fastf1.events import EventSchedule
 
-from pitstop.model.race_event import RaceEvent
+from pitstop.model.race_event import RaceEvent, EventInfo
 from pitstop.model.race_session import RaceSession
 
 
@@ -51,12 +51,13 @@ class FormulaApi:
 
             sessions = [session_one, session_two, session_three, session_four, session_five]
 
-            race_event = RaceEvent(
-                event['RoundNumber'],
+            event_info = EventInfo(event['RoundNumber'],
                 event['EventName'],
                 f"{event['Location']} - {event['Country']}",
                 event['EventDate'],
                 sessions)
+
+            race_event = RaceEvent(event_info)
 
             events.append(race_event)
 

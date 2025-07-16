@@ -3,7 +3,8 @@ from datetime import datetime, timedelta
 import pandas as pd
 
 from pitstop.service.formula_api import FormulaApi
-from pitstop.model.race_event import RaceEvent
+from pitstop.model.race_event import RaceEvent, EventInfo
+
 
 class DummySchedule(pd.DataFrame):
     @property
@@ -12,13 +13,13 @@ class DummySchedule(pd.DataFrame):
 
 def make_event(date_offset):
     date = datetime.now() + timedelta(days=date_offset)
-    return RaceEvent(
-        session=1,
+    info = EventInfo(session=1,
         name="Test GP",
         location="Testland",
         date=date,
-        sessions=[]
-    )
+        sessions=[])
+
+    return RaceEvent(info)
 
 def test_get_next_event_returns_next():
     events = [make_event(-2), make_event(2), make_event(5)]
