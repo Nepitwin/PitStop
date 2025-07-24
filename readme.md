@@ -1,33 +1,19 @@
 # PitStop
 
+----
+
+[![Docker Build](https://github.com/Nepitwin/PitStop/actions/workflows/docker.yml/badge.svg?branch=0.0.11&style=flat)](https://github.com/Nepitwin/PitStop/actions/workflows/docker.yml)
+[![Pylint Check](https://github.com/Nepitwin/PitStop/actions/workflows/pylint.yml/badge.svg?branch=main&style=flat)](https://github.com/Nepitwin/PitStop/actions/workflows/pylint.yml)
+[![Pytest Check](https://github.com/Nepitwin/PitStop/actions/workflows/pytest.yml/badge.svg?branch=main&style=flat)](https://github.com/Nepitwin/PitStop/actions/workflows/pytest.yml)
+[![Docker Pulls](https://img.shields.io/docker/pulls/nepitwin/pitstop?style=flat)](https://hub.docker.com/r/nepitwin/pitstop)
+
+----
+
 ![PitStop](logo.jpg "PitStop")
 
 PitStop is a Python project that uses the `fastf1` library to retrieve additional Formula 1 race information.
 
 - [Example Hosting](https://racing.cloudnepi.de)
-
-## Planned Features
-
-- Calendar implementation to receive events in a specific timezone
-
-## Project Structure
-
-```
-PitStop
-├── .dockerignore          # Docker ignore file
-├── .env                   # Environment variables
-├── .gitignore             # Git ignore file
-├── .pylintrc              # Pylint configuration
-├── docker-compose.yml     # Docker compose file
-├── Dockerfile             # Dockerfile
-├── LICENSE                # License file
-├── readme.md              # Project description
-├── requirements.txt       # Dependencies
-├── requirements-dev.txt   # Development dependencies
-├── src
-    ├── pitstop            # Main application directory
-    └── manage.py          # Django management script
-```
 
 ## Environment
 
