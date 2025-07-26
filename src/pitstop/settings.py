@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
 from pathlib import Path
 
 import os
@@ -24,7 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(os.environ.get("DEBUG", default=0))
+DEBUG = True
+if os.environ.get("DEBUG", default="True").lower() == "false":
+    DEBUG = False
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
@@ -96,4 +97,12 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 # Fast F1 cache directory
-FormulaApi.set_cache_directory(str(BASE_DIR))
+if DEBUG:
+    FAST_F1_CACHE_DIR = BASE_DIR
+else:
+    FAST_F1_CACHE_DIR = Path("/var/cache/fastf1")
+    if os.name == "nt":
+        FAST_F1_CACHE_DIR = BASE_DIR
+
+print("Setting Fast F1 cache directory to:", FAST_F1_CACHE_DIR)
+FormulaApi.set_cache_directory(str(FAST_F1_CACHE_DIR))

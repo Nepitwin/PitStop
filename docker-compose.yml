@@ -9,5 +9,11 @@ services:
      DEBUG: ${DEBUG}
      DJANGO_LOGLEVEL: ${DJANGO_LOGLEVEL}
      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS}
+   volumes:
+     - "fast_f1_cache:/var/cache/fastf1"
    env_file:
      - .env
+
+volumes:
+    fast_f1_cache:
+      driver: local

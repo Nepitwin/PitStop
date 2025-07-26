@@ -25,9 +25,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Stage 2: Production stage
 FROM python:3.13-alpine
 
-RUN adduser -D -g '' appuser && \
-   mkdir /app && \
-   chown -R appuser /app
+RUN adduser -D -G www-data www-data && \
+    mkdir /app && \
+    mkdir -p /var/cache/fastf1 && \
+    chown -R www-data:www-data /app /var/cache/fastf1
 
 # Copy the Python dependencies from the builder stage
 COPY --from=builder /usr/local/lib/python3.13/site-packages/ /usr/local/lib/python3.13/site-packages/
@@ -37,14 +38,16 @@ COPY --from=builder /usr/local/bin/ /usr/local/bin/
 WORKDIR /app
 
 # Copy the Django project to the container
-COPY --chown=appuser:appuser ./src /app/
+COPY --chown=www-data:www-data ./src /app/
 
 # Set environment variables to optimize Python
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Switch to non-root user
-USER appuser
+USER www-data
+
+VOLUME /var/cache/fastf1
 
 # Expose the Django port
 EXPOSE 8000
