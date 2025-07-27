@@ -30,6 +30,11 @@ def test_get_next_event_returns_none():
     events = [make_event(-5), make_event(-1)]
     assert FormulaApi.get_next_event(events) is None
 
+def test_get_next_event_same_day_returned():
+    events = [make_event(0), make_event(2)]
+    result = FormulaApi.get_next_event(events)
+    assert result.date.date() == datetime.now().date()
+
 def test_get_all_events_from_year():
     data = {
         'RoundNumber': [1],

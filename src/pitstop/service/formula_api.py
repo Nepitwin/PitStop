@@ -28,14 +28,8 @@ class FormulaApi:
 
     @staticmethod
     def get_next_event(events: List[RaceEvent]) -> Optional[RaceEvent]:
-        current_date = datetime.now()
-
-        future_events = [event for event in events if event.date > current_date]
-
-        if future_events:
-            return sorted(future_events, key=lambda e: e.date)[0]
-
-        return None
+        today = datetime.now().date()
+        return next((event for event in events if event.date.date() >= today), None)
 
     @staticmethod
     def get_all_events_from_year(schedule: EventSchedule) -> list[RaceEvent]:
