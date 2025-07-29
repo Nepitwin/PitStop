@@ -20,3 +20,4 @@ class RaceEvent:
         self.date = info.date
         self.sessions = info.sessions
         self.active = False
+        self.finished = False

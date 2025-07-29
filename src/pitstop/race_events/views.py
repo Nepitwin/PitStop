@@ -7,7 +7,7 @@ def index(request):
 
 def ajax_events(request):
     schedule = FormulaApi.get_event_schedule(2025, include_testing=False)
-    events = FormulaApi.get_all_events_from_year(schedule)
+    events = FormulaApi.get_all_race_events(schedule)
     driver_df, constructor_df = FormulaApi.get_standings(schedule)
 
     # Convert all session dates to the specified timezone

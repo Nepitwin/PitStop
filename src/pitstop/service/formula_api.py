@@ -14,25 +14,18 @@ class FormulaApi:
 
     @staticmethod
     def set_cache_directory(cache_dir: str) -> None:
-        """
-        Set the cache directory for FastF1.
-        """
         fastf1.Cache.enable_cache(cache_dir)
 
     @staticmethod
     def get_event_schedule(year: int, include_testing: bool = False) -> EventSchedule:
-        """
-        Get the event schedule for a given year.
-        """
         return fastf1.get_event_schedule(year, include_testing=include_testing)
 
     @staticmethod
     def get_next_event(events: List[RaceEvent]) -> Optional[RaceEvent]:
-        today = datetime.now().date()
-        return next((event for event in events if event.date.date() >= today), None)
+        return next((event for event in events if event.finished is False), None)
 
     @staticmethod
-    def get_all_events_from_year(schedule: EventSchedule) -> list[RaceEvent]:
+    def get_all_race_events(schedule: EventSchedule) -> list[RaceEvent]:
 
         events = []
 
@@ -52,6 +45,20 @@ class FormulaApi:
                 sessions)
 
             race_event = RaceEvent(event_info)
+
+            date = event['EventDate'].date()
+            current_data = datetime.now().date()
+
+            # Event is in future
+            if date < current_data:
+                race_event.finished = True
+
+            # Verify if event has finished
+            if date == current_data:
+                session = fastf1.get_session(2025, event['RoundNumber'], 'R')
+                session.load(laps=False, telemetry=False, weather=False, messages=False)
+                if not session.results.empty:
+                    race_event.finished = True
 
             events.append(race_event)
 
