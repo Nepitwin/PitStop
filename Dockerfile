@@ -39,6 +39,8 @@ WORKDIR /app
 
 # Copy the Django project to the container
 COPY --chown=www-data:www-data ./src /app/
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 # Set environment variables to optimize Python
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -52,5 +54,5 @@ VOLUME /var/cache/fastf1
 # Expose the Django port
 EXPOSE 8000
 
-# Run Django’s development server
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "pitstop.wsgi:application"]
+# Entrypoint script
+ENTRYPOINT ["/entrypoint.sh"]
