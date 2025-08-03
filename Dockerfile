@@ -28,7 +28,8 @@ FROM python:3.13-alpine
 RUN adduser -D -G www-data www-data && \
     mkdir /app && \
     mkdir -p /var/cache/fastf1 && \
-    chown -R www-data:www-data /app /var/cache/fastf1
+    mkdir -p /app/staticfiles && \
+    chown -R www-data:www-data /app /var/cache/fastf1 /app/staticfiles
 
 # Copy the Python dependencies from the builder stage
 COPY --from=builder /usr/local/lib/python3.13/site-packages/ /usr/local/lib/python3.13/site-packages/
