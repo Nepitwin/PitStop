@@ -86,11 +86,22 @@ class FormulaApi:
             # --- Sprint Session ---
             FormulaApi._add_standing_results_from_round(year, round_num, "S", driver_pts, constructor_pts)
 
-        # Create standings tables
+        # Define name mapping (unify duplicates)
+        name_map = {
+            "Andrea Kimi Antonelli": "Kimi Antonelli"
+        }
+
         driver_df = pd.DataFrame([
-            {'Driver': name, 'Points': pts}
+            {'Driver': name_map.get(name, name), 'Points': pts}
             for name, pts in driver_pts.items()
-        ]).sort_values(by='Points', ascending=False).reset_index(drop=True)
+        ])
+
+        driver_df = (
+            driver_df.groupby("Driver", as_index=False)["Points"]
+            .sum()
+            .sort_values(by="Points", ascending=False)
+            .reset_index(drop=True)
+        )
 
         constructor_df = pd.DataFrame([
             {'Constructor': name, 'Points': pts}
