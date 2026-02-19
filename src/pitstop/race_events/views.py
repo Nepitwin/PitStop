@@ -6,7 +6,8 @@ def index(request):
     return render(request, "race_events.html")
 
 def ajax_events(request):
-    schedule = FormulaApi.get_event_schedule(2025, include_testing=False)
+    year = 2026
+    schedule = FormulaApi.get_event_schedule(year, include_testing=False)
     events = FormulaApi.get_all_race_events(schedule)
     driver_df, constructor_df = FormulaApi.get_standings(schedule)
 

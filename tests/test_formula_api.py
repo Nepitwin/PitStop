@@ -11,25 +11,31 @@ class DummySchedule(pd.DataFrame):
     def year(self):
         return 2024
 
-def make_schedule(event_date, round_number=1):
+def make_schedule(date):
     data = {
-        'RoundNumber': [round_number],
+        'RoundNumber': [1],
         'EventName': ['Test GP'],
-        'Location': ['Testland'],
+        'Location': ['Test City'],
         'Country': ['Testland'],
-        'EventDate': [event_date],
+        'EventDate': [date],
         'Session1': ['FP1'],
-        'Session1Date': [event_date],
+        'Session1Date': [date],
         'Session2': ['FP2'],
-        'Session2Date': [event_date],
+        'Session2Date': [date],
         'Session3': ['FP3'],
-        'Session3Date': [event_date],
+        'Session3Date': [date],
         'Session4': ['Q'],
-        'Session4Date': [event_date],
+        'Session4Date': [date],
         'Session5': ['R'],
-        'Session5Date': [event_date],
+        'Session5Date': [date],
     }
-    return pd.DataFrame(data)
+
+    schedule = pd.DataFrame(data)
+
+    # Fix: mimic FastF1 EventSchedule API
+    schedule.year = date.year
+
+    return schedule
 
 def make_event(date_offset, finished=False):
     date = datetime.now() + timedelta(days=date_offset)
@@ -73,25 +79,7 @@ def test_get_all_events_from_year(mock_get_session):
     mock_session = MagicMock()
     mock_session.results.empty = True
     mock_get_session.return_value = mock_session
-
-    data = {
-        'RoundNumber': [1],
-        'EventName': ['Test GP'],
-        'Location': ['Test City'],
-        'Country': ['Testland'],
-        'EventDate': [datetime.now()],
-        'Session1': ['FP1'],
-        'Session1Date': [datetime.now()],
-        'Session2': ['FP2'],
-        'Session2Date': [datetime.now()],
-        'Session3': ['FP3'],
-        'Session3Date': [datetime.now()],
-        'Session4': ['Q'],
-        'Session4Date': [datetime.now()],
-        'Session5': ['R'],
-        'Session5Date': [datetime.now()],
-    }
-    schedule = pd.DataFrame(data)
+    schedule = make_schedule(datetime.now())
     events = FormulaApi.get_all_race_events(schedule)
     assert len(events) == 1
     assert isinstance(events[0], RaceEvent)

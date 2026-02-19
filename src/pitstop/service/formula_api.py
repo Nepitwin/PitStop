@@ -11,6 +11,30 @@ from pitstop.model.race_session import RaceSession
 
 
 class FormulaApi:
+    SEASON_ROSTER_2026 = {
+        "Lando Norris": "Red Bull Racing",
+        "Oscar Piastri": "McLaren",
+        "Max Verstappen": "Red Bull Racing",
+        "Isack Hadjar": "Red Bull Racing",
+        "George Russell": "Mercedes",
+        "Andrea Kimi Antonelli": "Mercedes",
+        "Charles Leclerc": "Ferrari",
+        "Lewis Hamilton": "Ferrari",
+        "Fernando Alonso": "Aston Martin",
+        "Lance Stroll": "Aston Martin",
+        "Pierre Gasly": "Alpine",
+        "Franco Colapinto": "Alpine",
+        "Alexander Albon": "Williams",
+        "Carlos Sainz": "Williams",
+        "Liam Lawson": "Racing Bulls",
+        "Arvin Lindblad": "Racing Bulls",
+        "Nico Hulkenberg": "Audi",
+        "Gabriel Bortoleto": "Audi",
+        "Esteban Ocon": "Haas F1 Team",
+        "Oliver Bearman": "Haas F1 Team",
+        "Valtteri Bottas": "Cadillac",
+        "Sergio Perez": "Cadillac"
+    }
 
     @staticmethod
     def set_cache_directory(cache_dir: str) -> None:
@@ -28,6 +52,7 @@ class FormulaApi:
     def get_all_race_events(schedule: EventSchedule) -> list[RaceEvent]:
 
         events = []
+        year = schedule.year
 
         for _, event in schedule.iterrows():
             session_one = RaceSession(event['Session1'], event['Session1Date'])
@@ -55,7 +80,7 @@ class FormulaApi:
 
             # Verify if event has finished
             if date == current_data:
-                session = fastf1.get_session(2025, event['RoundNumber'], 'R')
+                session = fastf1.get_session(year, event['RoundNumber'], 'R')
                 session.load(laps=False, telemetry=False, weather=False, messages=False)
                 if not session.results.empty:
                     race_event.finished = True
@@ -72,6 +97,11 @@ class FormulaApi:
         driver_pts = defaultdict(float)
         constructor_pts = defaultdict(float)
 
+        # --- Seed roster with 0 points (guarantees non-empty standings) ---
+        for driver, team in FormulaApi.SEASON_ROSTER_2026.items():
+            driver_pts[driver] = 0.0
+            constructor_pts[team] = 0.0
+
         now = pd.Timestamp.utcnow()
 
         for _, event in schedule.iterrows():
@@ -82,11 +112,21 @@ class FormulaApi:
                 break  # Skip upcoming races
 
             # --- Race Session ---
-            FormulaApi._add_standing_results_from_round(year, round_num, "R", driver_pts, constructor_pts)
-            # --- Sprint Session ---
-            FormulaApi._add_standing_results_from_round(year, round_num, "S", driver_pts, constructor_pts)
+            FormulaApi._get_standing_results_from_round(
+                year, round_num, "R", driver_pts, constructor_pts
+            )
 
-        # Define name mapping (unify duplicates)
+            # --- Sprint Session ---
+            FormulaApi._get_standing_results_from_round(
+                year, round_num, "S", driver_pts, constructor_pts
+            )
+
+        if len(driver_pts) == 0 and len(constructor_pts) == 0:
+            for driver, team in FormulaApi._get_roster_from_year(year).items():
+                driver_pts[driver] = 0.0
+                constructor_pts[team] = 0.0
+
+        # Define name mapping (unify duplicates from FastF1 vs roster)
         name_map = {
             "Andrea Kimi Antonelli": "Kimi Antonelli"
         }
@@ -106,7 +146,14 @@ class FormulaApi:
         constructor_df = pd.DataFrame([
             {'Constructor': name, 'Points': pts}
             for name, pts in constructor_pts.items()
-        ]).sort_values(by='Points', ascending=False).reset_index(drop=True)
+        ])
+
+        constructor_df = (
+            constructor_df.groupby("Constructor", as_index=False)["Points"]
+            .sum()
+            .sort_values(by='Points', ascending=False)
+            .reset_index(drop=True)
+        )
 
         driver_df.index += 1
         constructor_df.index += 1
@@ -116,7 +163,7 @@ class FormulaApi:
         return driver_df, constructor_df
 
     @staticmethod
-    def _add_standing_results_from_round(year: int,
+    def _get_standing_results_from_round(year: int,
                                          round_number: int,
                                          identifier: str,
                                          driver_pts: dict,
@@ -134,3 +181,9 @@ class FormulaApi:
                 constructor_pts[team] += points
         except ValueError:
             pass  # No sprint for this round
+
+    @staticmethod
+    def _get_roster_from_year(year: int) -> dict:
+        if year == 2026:
+            return FormulaApi.SEASON_ROSTER_2026
+        return {}
