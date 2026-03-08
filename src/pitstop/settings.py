@@ -94,11 +94,11 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 # Fast F1 cache directory
 if DEBUG:
-    FAST_F1_CACHE_DIR = BASE_DIR
+    fastf1_cache_dir = BASE_DIR
 else:
-    FAST_F1_CACHE_DIR = Path("/var/cache/fastf1")
+    fastf1_cache_dir = Path("/var/cache/fastf1")
     if os.name == "nt":
-        FAST_F1_CACHE_DIR = BASE_DIR
+        fastf1_cache_dir = BASE_DIR
 
-print("Setting Fast F1 cache directory to:", FAST_F1_CACHE_DIR)
-FormulaApi.set_cache_directory(str(FAST_F1_CACHE_DIR))
+print("Setting Fast F1 cache directory to:", fastf1_cache_dir)
+FormulaApi.set_cache_directory(str(fastf1_cache_dir))
