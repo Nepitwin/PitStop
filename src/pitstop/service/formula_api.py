@@ -27,7 +27,7 @@ class FormulaApi:
         "Alexander Albon": "Williams",
         "Carlos Sainz": "Williams",
         "Liam Lawson": "Racing Bulls",
-        "Arvin Lindblad": "Racing Bulls",
+        "Arvid Lindblad": "Racing Bulls",
         "Nico Hulkenberg": "Audi",
         "Gabriel Bortoleto": "Audi",
         "Esteban Ocon": "Haas F1 Team",
