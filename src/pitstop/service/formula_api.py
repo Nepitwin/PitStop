@@ -143,8 +143,13 @@ class FormulaApi:
             .reset_index(drop=True)
         )
 
+        constructor_map = {
+            "Red Bull": "Red Bull Racing",
+            "RB F1 Team": "Racing Bulls"
+        }
+
         constructor_df = pd.DataFrame([
-            {'Constructor': name, 'Points': pts}
+            {'Constructor': constructor_map.get(name, name), 'Points': pts}
             for name, pts in constructor_pts.items()
         ])
 
