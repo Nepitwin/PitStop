@@ -36,6 +36,20 @@ class FormulaApi:
         "Sergio Perez": "Cadillac"
     }
 
+    # Define name mapping (unify duplicates from FastF1 vs roster)
+    DRIVER_NAMES = {
+        "Andrea Kimi Antonelli": "Kimi Antonelli"
+    }
+
+    # Define team name mapping (unify duplicates from FastF1 vs roster)
+    TEAM_NAMES = {
+        "Red Bull": "Red Bull Racing",
+        "RB F1 Team": "Racing Bulls",
+        "Cadillac F1 Team": "Cadillac",
+        "Haas F1 Team": "Haas",
+        "Alpine F1 Team": "Alpine"
+    }
+
     @staticmethod
     def set_cache_directory(cache_dir: str) -> None:
         fastf1.Cache.enable_cache(cache_dir)
@@ -126,13 +140,8 @@ class FormulaApi:
                 driver_pts[driver] = 0.0
                 constructor_pts[team] = 0.0
 
-        # Define name mapping (unify duplicates from FastF1 vs roster)
-        name_map = {
-            "Andrea Kimi Antonelli": "Kimi Antonelli"
-        }
-
         driver_df = pd.DataFrame([
-            {'Driver': name_map.get(name, name), 'Points': pts}
+            {'Driver': FormulaApi.DRIVER_NAMES.get(name, name), 'Points': pts}
             for name, pts in driver_pts.items()
         ])
 
@@ -143,14 +152,8 @@ class FormulaApi:
             .reset_index(drop=True)
         )
 
-        constructor_map = {
-            "Red Bull": "Red Bull Racing",
-            "RB F1 Team": "Racing Bulls",
-            "Cadillac F1 Team": "Cadillac"
-        }
-
         constructor_df = pd.DataFrame([
-            {'Constructor': constructor_map.get(name, name), 'Points': pts}
+            {'Constructor': FormulaApi.TEAM_NAMES.get(name, name), 'Points': pts}
             for name, pts in constructor_pts.items()
         ])
 
