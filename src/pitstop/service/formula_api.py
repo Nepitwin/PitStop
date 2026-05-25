@@ -145,7 +145,8 @@ class FormulaApi:
 
         constructor_map = {
             "Red Bull": "Red Bull Racing",
-            "RB F1 Team": "Racing Bulls"
+            "RB F1 Team": "Racing Bulls",
+            "Cadillac F1 Team": "Cadillac"
         }
 
         constructor_df = pd.DataFrame([
