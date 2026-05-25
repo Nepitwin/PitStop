@@ -28,17 +28,19 @@ class FormulaApi:
         "Carlos Sainz": "Williams",
         "Liam Lawson": "Racing Bulls",
         "Arvid Lindblad": "Racing Bulls",
-        "Nico Hulkenberg": "Audi",
+        "Nico Hülkenberg": "Audi",
         "Gabriel Bortoleto": "Audi",
         "Esteban Ocon": "Haas F1 Team",
         "Oliver Bearman": "Haas F1 Team",
         "Valtteri Bottas": "Cadillac",
-        "Sergio Perez": "Cadillac"
+        "Sergio Pérez": "Cadillac"
     }
 
     # Define name mapping (unify duplicates from FastF1 vs roster)
     DRIVER_NAMES = {
-        "Andrea Kimi Antonelli": "Kimi Antonelli"
+        "Andrea Kimi Antonelli": "Kimi Antonelli",
+        "Nico Hulkenberg": "Nico Hülkenberg",
+        "Sergio Perez": "Sergio Pérez"
     }
 
     # Define team name mapping (unify duplicates from FastF1 vs roster)
