@@ -1,5 +1,5 @@
 fastf1==3.8.3
-django==6.0.5
+django==6.0.7
 gunicorn==26.0.0
-requests==2.33.1
+requests==2.34.2
 pandas==2.3.3

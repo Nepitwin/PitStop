@@ -1,5 +1,6 @@
 from zoneinfo import ZoneInfo
 from django.shortcuts import render
+import pandas as pd
 from pitstop.service.formula_api import FormulaApi
 
 def index(request):
@@ -15,7 +16,8 @@ def ajax_events(request):
     zone = ZoneInfo("Europe/Berlin")
     for event in events:
         for session in event.sessions:
-            session.date = session.date.astimezone(zone)
+            if pd.notna(session.date):
+                session.date = session.date.astimezone(zone)
 
     # Get next event as active event
     event = FormulaApi.get_next_event(events)
